@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/dialog";
 // import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+const open = defineModel<boolean>({
+  default: false,
+});
 const emits = defineEmits<{
   (e: "save"): void;
 }>();
@@ -19,7 +22,7 @@ const save = () => {
 };
 </script>
 <template>
-  <Dialog>
+  <Dialog v-model:open="open">
     <form>
       <DialogTrigger as-child>
         <slot name="trigger"> </slot>

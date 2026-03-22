@@ -2,9 +2,9 @@
 import Dexie, { type EntityTable } from "dexie";
 import { Input } from "@/components/ui/input";
 import { type Song, type Playlist } from "@/utils/dexie";
-
+import Dialog from "@/components/Dialog.vue";
 const playlists = ref<Playlist[]>([]);
-
+const open = ref(false);
 onMounted(async () => {
   // 第一次访问 songs 表时，Dexie 会自动处理 open()
   playlists.value = await db.playlists.toArray();
@@ -19,6 +19,8 @@ const add = () => {
 };
 // 点击保存
 const save = async () => {
+  open.value = false;
+  return;
   const res = await createPlaylist(content.value);
   console.log(res);
   if (res) {
@@ -38,7 +40,7 @@ onMounted(() => {
       <h2 class="text-gray text-sm uppercase font-semibold">我的歌单</h2>
 
       <!-- <i class="fa fa-plus"></i> -->
-      <Dialog @save="save">
+      <Dialog @save="save" v-model="open">
         <template #trigger>
           <Icon
             name="mynaui:heart-plus"
