@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
-
+import { useMusicList } from "@/composables/useTypeList";
 interface TopList {
   id: number;
   name: string;
@@ -10,7 +10,7 @@ interface TopList {
 }
 const appConfig = useAppConfig();
 const { baseURL } = appConfig;
-const activeIndex = ref(0);
+const { changeActiveIndex, activeIndex } = useMusicList();
 const {
   data,
 }: { data: any; status: any; error: any; refresh: any; clear: any } =
@@ -24,7 +24,7 @@ const changeMusic = async (item: TopList) => {
     baseURL + `/playlist/track/all?id=${item.id}&limit=30&offset=0`,
   );
 
-  activeIndex.value = item.id;
+  changeActiveIndex(item.id);
   changeMusicList(res.songs);
   changeCurrentMusic({ name: item.name, description: item?.description || "" });
 };

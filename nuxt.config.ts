@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-
+import { codeInspectorPlugin } from "code-inspector-plugin";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
@@ -19,5 +19,8 @@ export default defineNuxtConfig({
      * @default "@/components/ui"
      */
     componentDir: "@/components/ui",
+  },
+  vite: {
+    plugins: [codeInspectorPlugin({ bundler: "vite" })],
   },
 });

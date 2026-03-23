@@ -1,10 +1,10 @@
 # 悦听播放器
 
-一个基于 Nuxt 3 + Vue 3 + Tailwind CSS 构建的现代化音乐播放器 Web 应用。
+一个基于 Nuxt 4 + Vue 3 + Tailwind CSS 构建的现代化音乐播放器 Web 应用。
 
 ## 技术栈
 
-- **框架**: [Nuxt 3](https://nuxt.com/) - 全栈 Vue 框架
+- **框架**: [Nuxt 4](https://nuxt.com/) - 全栈 Vue 框架
 - **UI 框架**: [Vue 3](https://vuejs.org/) + [Tailwind CSS](https://tailwindcss.com/)
 - **组件库**: [shadcn-vue](https://www.shadcn-vue.com/) - 基于 Radix Vue 的 UI 组件
 - **图标**: [@nuxt/icon](https://icones.js.org/) + Font Awesome
@@ -19,7 +19,7 @@
 - 音乐播放控制（播放/暂停/上一首/下一首/循环）
 - 播放进度控制
 - 本地数据持久化
-- 响应式布局设计
+
 
 ## 项目结构
 

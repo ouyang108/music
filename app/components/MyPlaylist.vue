@@ -3,14 +3,15 @@ import Dexie, { type EntityTable } from "dexie";
 import { Input } from "@/components/ui/input";
 import { type Song, type Playlist } from "@/utils/dexie";
 import Dialog from "@/components/Dialog.vue";
+import { useMusicList } from "@/composables/useTypeList";
+import { cn } from "~/lib/utils";
 const playlists = ref<Playlist[]>([]);
 const open = ref(false);
 onMounted(async () => {
   // 第一次访问 songs 表时，Dexie 会自动处理 open()
   playlists.value = await db.playlists.toArray();
-  console.log("当前歌单列表:", playlists.value);
 });
-
+const { changeActiveIndex, activeIndex } = useMusicList();
 const content = ref("");
 // 点击添加
 const add = () => {
@@ -19,13 +20,20 @@ const add = () => {
 };
 // 点击保存
 const save = async () => {
-  open.value = false;
-  return;
   const res = await createPlaylist(content.value);
-  console.log(res);
   if (res) {
-    // 添加成功
+    // 添加成功关闭对话框
+    open.value = false;
+    playlists.value.push({
+      id: res,
+      name: content.value,
+      createTime: Date.now(),
+    });
   }
+};
+// 切换
+const change = (item: Playlist) => {
+  changeActiveIndex(item.id!);
 };
 onMounted(() => {
   const cacheDB = new Dexie("musicCache");
@@ -72,13 +80,24 @@ onMounted(() => {
       <!-- 因为需要从浏览器的indexedDB中获取数据，所以只能在客户端渲染 -->
       <ClientOnly>
         <li
-          class="category-item active px-3 py-2 rounded-lg hover:bg-primary-foreground/50 cursor-pointer transition-colors"
+          :class="
+            cn(
+              'category-item active px-3 py-2 rounded-lg hover:bg-primary-foreground/50 cursor-pointer transition-colors',
+              {
+                'bg-primary-foreground / 10': activeIndex === item.id,
+              },
+            )
+          "
           data-type="recommend"
           v-for="item in playlists"
           :key="item.id"
+          @click="change(item)"
         >
           {{ item.name }}
         </li>
+        <template #fallback>
+          <li class="px-3 py-2 text-gray-400">加载中...</li>
+        </template>
       </ClientOnly>
     </ul>
   </div>

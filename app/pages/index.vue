@@ -1,20 +1,35 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
-
+import LRUCache from "~/utils/LRU";
 // 假设数据来自你的 Composable
-const { currentMusic, musicList } = useMusicList();
-
+const { currentMusic, musicList, changeMusic } = useMusicList();
+const appConfig = useAppConfig();
+const { baseURL } = appConfig;
 const active = ref(0);
 
-const formatDuration = (ms: number) => {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+const cache = new LRUCache(50);
+const getMusicUrl = async (id: string | number) => {
+  const res: any = await $fetch(
+    baseURL + "song/url/v1?id=" + id + "&level=exhigh",
+  ).catch(() => {
+    console.log("获取歌曲url失败");
+  });
+  // console.log(res.data[0], "res");
+  return res.data[0].url;
 };
-// 切换歌曲
-const changeActive = (song: any) => {
+// 播放歌曲;
+const playActive = async (song: any) => {
   active.value = song.id;
+
+  const cacheUrl = cache.get(song.id);
+  if (cacheUrl) {
+    changeMusic(cacheUrl);
+    return;
+  }
+  // 调用接口
+  const url = await getMusicUrl(song.id);
+  cache.set(song.id, url);
+  changeMusic(url);
 };
 </script>
 
@@ -47,7 +62,6 @@ const changeActive = (song: any) => {
         <div
           v-for="(song, index) in musicList"
           :key="song.id"
-          @click="changeActive(song)"
           :class="
             cn(
               'grid grid-cols-12 px-6 py-4 items-center hover:bg-white/10 transition-all group cursor-default',
@@ -65,6 +79,7 @@ const changeActive = (song: any) => {
             </span>
 
             <Icon
+              @click="playActive(song)"
               name="mynaui:play"
               class="hidden group-hover:block cursor-pointer text-white text-xl"
             />

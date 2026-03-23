@@ -13,11 +13,8 @@
         </div>
       </main>
     </div>
-    <div
-      class="sticky border-t bg-background border-gray/10 px-6 flex items-center justify-between z-10 h-20"
-    >
-      <Footer />
-    </div>
+
+    <Footer />
   </div>
 </template>
 <style lang="scss" scoped></style>
