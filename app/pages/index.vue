@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
+import { nextTick } from "vue";
 // 假设数据来自你的 Composable
 const {
   currentMusic,
@@ -11,8 +12,41 @@ const {
 } = useMusicList();
 const { getMusicUrlWithCache } = useMusicCache();
 const active = ref(0);
+const songScrollContainer = ref<HTMLElement | null>(null);
+const favoriteIds = ref<Set<number>>(new Set());
 
-// 播放歌曲;
+// const toggleFavorite = (song: any) => {
+//   if (!song?.id) return;
+//   if (favoriteIds.value.has(song.id)) {
+//     favoriteIds.value.delete(song.id);
+//   } else {
+//     favoriteIds.value.add(song.id);
+//   }
+//   favoriteIds.value = new Set(favoriteIds.value);
+// };
+
+const scrollCurrentSongIntoView = (index: number) => {
+  if (index < 0 || !songScrollContainer.value) return;
+
+  const item = document.getElementById(`song-item-${index}`);
+  if (!item) return;
+
+  const container = songScrollContainer.value;
+  const containerRect = container.getBoundingClientRect();
+  const itemRect = item.getBoundingClientRect();
+
+  const targetTop =
+    container.scrollTop +
+    (itemRect.top - containerRect.top) -
+    container.clientHeight / 2 +
+    item.clientHeight / 2;
+
+  container.scrollTo({
+    top: targetTop,
+    behavior: "smooth",
+  });
+};
+
 const playActive = async (song: any, index: number = 0) => {
   active.value = song.id;
 
@@ -22,9 +56,16 @@ const playActive = async (song: any, index: number = 0) => {
   changeCurrentMusicIndex(index);
 };
 // 当分类切换的时候，需要修改currentIndexMusic
-watch(activeIndex, (newVal) => {
+watch(activeIndex, () => {
   changeCurrentMusicIndex(-1);
 });
+
+watch(currentIndexMusic, async (newIndex) => {
+  if (newIndex < 0) return;
+  await nextTick();
+  scrollCurrentSongIntoView(newIndex);
+});
+
 // 动态 SEO
 // useSeoMeta({
 //   title: () =>
@@ -69,10 +110,12 @@ watch(activeIndex, (newVal) => {
       </div>
 
       <div
+        ref="songScrollContainer"
         class="flex-1 overflow-y-auto scrollbar-hide divide-y divide-white/5"
       >
         <div
           v-for="(song, index) in musicList"
+          :id="`song-item-${index}`"
           :key="song.id"
           :class="
             cn(
@@ -114,12 +157,16 @@ watch(activeIndex, (newVal) => {
                 {{ song.alia[0] }}
               </span>
             </div>
-            <button
-              class="opacity-0 group-hover:opacity-100 ml-2 text-gray-400 hover:text-primary transition-all p-1"
+            <!-- <button
+              class="group-hover:opacity-100 ml-2 text-gray-400 hover:text-primary transition-all p-1"
               @click.stop="$emit('add-to-playlist', song)"
             >
-              <i class="fa fa-plus-circle text-lg"></i>
-            </button>
+              <Icon
+                name="mynaui:heart"
+                class="text-lg"
+                :style="{ color: 'var(--text-primary)' }"
+              />
+            </button> -->
           </div>
 
           <div class="col-span-3 text-gray-400 text-sm truncate pr-4">
