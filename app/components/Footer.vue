@@ -7,7 +7,14 @@ import PlayerControls from "@/components/player/PlayerControls.vue";
 import ProgressBar from "@/components/player/ProgressBar.vue";
 import VolumeControl from "@/components/player/VolumeControl.vue";
 
-const { music } = useMusicList();
+const {
+  music,
+  musicList,
+  changeMusic,
+  currentIndexMusic,
+  changeCurrentMusicIndex,
+} = useMusicList();
+const { getMusicUrlWithCache } = useMusicCache();
 const audioRef = useTemplateRef<HTMLAudioElement>("audioRef");
 
 // 使用音频播放器 composable
@@ -22,11 +29,24 @@ const {
   seek,
   setVolume,
   loadAndPlay,
+  handlePlay,
+  handlePause,
   handleTimeUpdate,
   handleLoadedMetadata,
-  handleEnded,
+  handleEnded: originalHandleEnded,
   handleError,
 } = useAudioPlayer(audioRef);
+
+// 播放指定歌曲（使用共享缓存）
+const playActive = async (song: any, index: number) => {
+  if (!song) return;
+
+  changeCurrentMusicIndex(index);
+
+  // 使用共享缓存获取音乐 URL
+  const url = await getMusicUrlWithCache(song.id);
+  changeMusic(url);
+};
 
 // 监听音乐变化，自动加载并播放
 watch(music, async (newUrl) => {
@@ -35,13 +55,34 @@ watch(music, async (newUrl) => {
   }
 });
 
-// TODO: 实现上一曲/下一曲功能
+// 上一曲
 const handlePrevious = () => {
-  console.log("上一曲");
+  if (!musicList.value.length) return;
+
+  const prevIndex =
+    currentIndexMusic.value > 0
+      ? currentIndexMusic.value - 1
+      : musicList.value.length - 1;
+
+  playActive(musicList.value[prevIndex], prevIndex);
 };
 
+// 下一曲
 const handleNext = () => {
-  console.log("下一曲");
+  if (!musicList.value.length) return;
+
+  const nextIndex =
+    currentIndexMusic.value < musicList.value.length - 1
+      ? currentIndexMusic.value + 1
+      : 0;
+
+  playActive(musicList.value[nextIndex], nextIndex);
+};
+
+// 播放结束时自动播放下一曲
+const handleEnded = () => {
+  originalHandleEnded();
+  handleNext();
 };
 </script>
 
@@ -83,6 +124,8 @@ const handleNext = () => {
     <audio
       ref="audioRef"
       crossorigin="anonymous"
+      @play="handlePlay"
+      @pause="handlePause"
       @ended="handleEnded"
       @timeupdate="handleTimeUpdate"
       @loadedmetadata="handleLoadedMetadata"

@@ -12,11 +12,17 @@ const handleInput = (e: Event) => {
   const target = e.target as HTMLInputElement;
   emit("volumeChange", parseFloat(target.value));
 };
+
+const volumeIcon = computed(() => {
+  if (props.volume === 0) return "heroicons:speaker-x-mark";
+
+  return "heroicons:speaker-wave";
+});
 </script>
 
 <template>
   <div class="flex items-center gap-4">
-    <i class="fa fa-volume-up text-white/60"></i>
+    <Icon :name="volumeIcon" class="text-white/60 w-5 h-5" />
     <div class="w-24 h-1 bg-white/10 rounded-full relative group">
       <input
         type="range"

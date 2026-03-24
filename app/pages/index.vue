@@ -1,36 +1,48 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
-import LRUCache from "~/utils/LRU";
 // 假设数据来自你的 Composable
-const { currentMusic, musicList, changeMusic } = useMusicList();
-const appConfig = useAppConfig();
-const { baseURL } = appConfig;
+const {
+  currentMusic,
+  musicList,
+  changeMusic,
+  changeCurrentMusicIndex,
+  currentIndexMusic,
+  activeIndex,
+} = useMusicList();
+const { getMusicUrlWithCache } = useMusicCache();
 const active = ref(0);
 
-const cache = new LRUCache(50);
-const getMusicUrl = async (id: string | number) => {
-  const res: any = await $fetch(
-    baseURL + "song/url/v1?id=" + id + "&level=exhigh",
-  ).catch(() => {
-    console.log("获取歌曲url失败");
-  });
-  // console.log(res.data[0], "res");
-  return res.data[0].url;
-};
 // 播放歌曲;
-const playActive = async (song: any) => {
+const playActive = async (song: any, index: number = 0) => {
   active.value = song.id;
 
-  const cacheUrl = cache.get(song.id);
-  if (cacheUrl) {
-    changeMusic(cacheUrl);
-    return;
-  }
-  // 调用接口
-  const url = await getMusicUrl(song.id);
-  cache.set(song.id, url);
+  // 使用共享缓存获取音乐 URL
+  const url = await getMusicUrlWithCache(song.id);
   changeMusic(url);
+  changeCurrentMusicIndex(index);
 };
+// 当分类切换的时候，需要修改currentIndexMusic
+watch(activeIndex, (newVal) => {
+  changeCurrentMusicIndex(-1);
+});
+// 动态 SEO
+// useSeoMeta({
+//   title: () =>
+//     currentMusic.value?.name
+//       ? `${currentMusic.value.name} - 音乐播放器`
+//       : "音乐播放器 - 在线音乐欣赏平台",
+//   description: () =>
+//     currentMusic.value?.description ||
+//     "一个现代化的在线音乐播放器，支持海量音乐在线播放，提供流畅的音乐体验",
+//   ogTitle: () =>
+//     currentMusic.value?.name
+//       ? `${currentMusic.value.name} - 音乐播放器`
+//       : "音乐播放器",
+//   ogDescription: () =>
+//     currentMusic.value?.description || "在线音乐播放，流畅音乐体验",
+//   ogImage: () => currentMusic.value?.picUrl || "/og-image.jpg",
+//   twitterCard: "summary_large_image",
+// });
 </script>
 
 <template>
@@ -66,7 +78,7 @@ const playActive = async (song: any) => {
             cn(
               'grid grid-cols-12 px-6 py-4 items-center hover:bg-white/10 transition-all group cursor-default',
               {
-                'bg-white/10': active === song.id,
+                'bg-white/10': currentIndexMusic === index,
               },
             )
           "
@@ -79,7 +91,7 @@ const playActive = async (song: any) => {
             </span>
 
             <Icon
-              @click="playActive(song)"
+              @click="playActive(song, index)"
               name="mynaui:play"
               class="hidden group-hover:block cursor-pointer text-white text-xl"
             />

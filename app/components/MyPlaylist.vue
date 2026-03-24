@@ -17,6 +17,7 @@ const content = ref("");
 const add = () => {
   // 这里可以添加一些逻辑，比如打开一个对话框让用户输入歌单信息
   console.log("添加歌单");
+  open.value = true;
 };
 // 点击保存
 const save = async () => {
@@ -46,31 +47,13 @@ onMounted(() => {
   <div class="flex-1 flex flex-col">
     <div class="flex justify-between items-center mb-3 px-2">
       <h2 class="text-gray text-sm uppercase font-semibold">我的歌单</h2>
-
+      <Icon
+        name="mynaui:heart-plus"
+        class="cursor-pointer"
+        @click="add"
+        style="color: rgb(30, 215, 96)"
+      />
       <!-- <i class="fa fa-plus"></i> -->
-      <Dialog @save="save" v-model="open">
-        <template #trigger>
-          <Icon
-            name="mynaui:heart-plus"
-            class="cursor-pointer"
-            @click="add"
-            style="color: rgb(30, 215, 96)"
-          />
-        </template>
-        <template #title> 创建新歌单 </template>
-        <template #content>
-          <div class="grid gap-4">
-            <div class="grid gap-3">
-              <Input
-                id="username-1"
-                name="username"
-                placeholder="请输入歌单名称"
-                v-model="content"
-              />
-            </div>
-          </div>
-        </template>
-      </Dialog>
     </div>
     <ul
       id="playlistContainer"
@@ -100,6 +83,21 @@ onMounted(() => {
         </template>
       </ClientOnly>
     </ul>
+    <Dialog @save="save" v-model="open" hydrate-on-idle>
+      <template #title> 创建新歌单 </template>
+      <template #content>
+        <div class="grid gap-4">
+          <div class="grid gap-3">
+            <Input
+              id="username-1"
+              name="username"
+              placeholder="请输入歌单名称"
+              v-model="content"
+            />
+          </div>
+        </div>
+      </template>
+    </Dialog>
   </div>
 </template>
 <style lang="scss" scoped></style>

@@ -10,19 +10,17 @@ export interface AudioPlayerState {
   error: string | null;
 }
 
-export const useAudioPlayer = (audioRef: Ref<HTMLAudioElement | null | undefined>) => {
+export const useAudioPlayer = (
+  audioRef: Ref<HTMLAudioElement | null | undefined>,
+) => {
   const { stream, playUrl } = useAudioStream();
 
   // 状态
+  const isPlaying = ref(false);
   const currentTime = ref(0);
   const duration = ref(0);
-  const volume = ref(80);
+  const volume = ref(60);
   const error = ref<string | null>(null);
-
-  // 派生状态 - 从 audio 元素直接获取，避免手动同步
-  const isPlaying = computed(() => {
-    return audioRef.value ? !audioRef.value.paused : false;
-  });
 
   const progress = computed(() => {
     if (!duration.value) return 0;
@@ -76,6 +74,14 @@ export const useAudioPlayer = (audioRef: Ref<HTMLAudioElement | null | undefined
   };
 
   // 事件处理
+  const handlePlay = () => {
+    isPlaying.value = true;
+  };
+
+  const handlePause = () => {
+    isPlaying.value = false;
+  };
+
   const handleTimeUpdate = () => {
     if (audioRef.value) {
       currentTime.value = audioRef.value.currentTime;
@@ -89,6 +95,7 @@ export const useAudioPlayer = (audioRef: Ref<HTMLAudioElement | null | undefined
   };
 
   const handleEnded = () => {
+    isPlaying.value = false;
     currentTime.value = 0;
   };
 
@@ -111,7 +118,7 @@ export const useAudioPlayer = (audioRef: Ref<HTMLAudioElement | null | undefined
         audio.volume = volume.value / 100;
       }
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   return {
@@ -133,6 +140,8 @@ export const useAudioPlayer = (audioRef: Ref<HTMLAudioElement | null | undefined
     loadAndPlay,
 
     // 事件处理器
+    handlePlay,
+    handlePause,
     handleTimeUpdate,
     handleLoadedMetadata,
     handleEnded,

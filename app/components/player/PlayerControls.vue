@@ -15,18 +15,24 @@ const emit = defineEmits<{
   <div class="flex items-center gap-6">
     <button
       @click="emit('previous')"
-      class="hover:text-primary transition-colors"
+      class="text-primary transition-colors cursor-pointer"
     >
-      <i class="fa fa-step-backward"></i>
+      <Icon name="mynaui:skip-back" class="text-xl" />
     </button>
     <button
       @click="emit('togglePlay')"
       class="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg"
     >
-      <i :class="['fa', isPlaying ? 'fa-pause' : 'fa-play', 'ml-0.5']"></i>
+      <Icon
+        :name="isPlaying ? 'mynaui:pause' : 'mynaui:play'"
+        class="text-xl"
+      />
     </button>
-    <button @click="emit('next')" class="hover:text-primary transition-colors">
-      <i class="fa fa-step-forward"></i>
+    <button
+      @click="emit('next')"
+      class="text-primary transition-colors cursor-pointer"
+    >
+      <Icon name="mynaui:skip-forward" class="text-xl" />
     </button>
   </div>
 </template>

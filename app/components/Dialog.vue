@@ -1,14 +1,4 @@
 <script setup lang="ts">
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 // import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 const open = defineModel<boolean>({
@@ -22,29 +12,29 @@ const save = () => {
 };
 </script>
 <template>
-  <Dialog v-model:open="open">
+  <UiDialog v-model:open="open">
     <form>
-      <DialogTrigger as-child>
+      <UiDialogTrigger as-child>
         <slot name="trigger"> </slot>
-      </DialogTrigger>
-      <DialogContent class="sm:max-w-106.25">
-        <DialogHeader>
-          <DialogTitle><slot name="title"> </slot></DialogTitle>
-          <DialogDescription>
+      </UiDialogTrigger>
+      <UiDialogContent class="sm:max-w-106.25">
+        <UiDialogHeader>
+          <UiDialogTitle><slot name="title"> </slot></UiDialogTitle>
+          <UiDialogDescription>
             <slot name="description"> </slot>
-          </DialogDescription>
-        </DialogHeader>
+          </UiDialogDescription>
+        </UiDialogHeader>
         <slot name="content"> </slot>
-        <DialogFooter>
-          <DialogClose as-child>
-            <Button variant="outline" class="cursor-pointer"> 取消 </Button>
-          </DialogClose>
-          <Button type="submit" class="cursor-pointer" @click="save">
+        <UiDialogFooter>
+          <UiDialogClose as-child>
+            <UiButton variant="outline" class="cursor-pointer"> 取消 </UiButton>
+          </UiDialogClose>
+          <UiButton type="submit" class="cursor-pointer" @click="save">
             保存
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+          </UiButton>
+        </UiDialogFooter>
+      </UiDialogContent>
     </form>
-  </Dialog>
+  </UiDialog>
 </template>
 <style lang="scss" scoped></style>
