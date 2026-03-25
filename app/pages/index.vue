@@ -157,8 +157,8 @@ watch(currentIndexMusic, async (newIndex) => {
                 {{ song.alia[0] }}
               </span>
             </div>
-            <!-- <button
-              class="group-hover:opacity-100 ml-2 text-gray-400 hover:text-primary transition-all p-1"
+            <button
+              class="group-hover:opacity-100 ml-2 text-gray-400 hover:text-primary transition-all p-1 cursor-pointer"
               @click.stop="$emit('add-to-playlist', song)"
             >
               <Icon
@@ -166,7 +166,7 @@ watch(currentIndexMusic, async (newIndex) => {
                 class="text-lg"
                 :style="{ color: 'var(--text-primary)' }"
               />
-            </button> -->
+            </button>
           </div>
 
           <div class="col-span-3 text-gray-400 text-sm truncate pr-4">

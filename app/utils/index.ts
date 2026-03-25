@@ -6,7 +6,9 @@ export const formatDuration = (ms: number) => {
 };
 export const getMusicUrl = async (baseURL: string, id: string | number) => {
   const res: any = await $fetch(
-    baseURL + "song/url/v1?id=" + id + "&level=exhigh",
+    "/api/detail",
+    { params: { id, level: "exhigh" } },
+    // "song/url/v1?id=" + id + "&level=exhigh",
   ).catch(() => {
     console.log("获取歌曲url失败");
   });

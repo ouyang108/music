@@ -20,9 +20,7 @@ const { changeMusicList, changeCurrentMusic } = useMusicList();
 
 const list = computed(() => data.value?.list?.slice(0, 5) || []);
 const changeMusic = async (item: TopList) => {
-  const res: any = await $fetch(
-    baseURL + `/playlist/track/all?id=${item.id}&limit=30&offset=0`,
-  );
+  const res: any = await $fetch("/api/list", { params: { id: item.id } });
 
   changeActiveIndex(item.id);
   changeMusicList(res.songs);
