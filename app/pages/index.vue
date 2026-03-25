@@ -9,7 +9,16 @@ const {
   changeCurrentMusicIndex,
   currentIndexMusic,
   activeIndex,
+  searchQuery,
 } = useMusicList();
+
+const filteredList = computed(() => {
+  const q = searchQuery.value.trim();
+  if (!q) return musicList.value;
+  return musicList.value.filter((song) =>
+    song.name?.toLowerCase().includes(q.toLowerCase()),
+  );
+});
 const { getMusicUrlWithCache } = useMusicCache();
 const active = ref(0);
 const songScrollContainer = ref<HTMLElement | null>(null);
@@ -114,7 +123,7 @@ watch(currentIndexMusic, async (newIndex) => {
         class="flex-1 overflow-y-auto scrollbar-hide divide-y divide-white/5"
       >
         <div
-          v-for="(song, index) in musicList"
+          v-for="(song, index) in filteredList"
           :id="`song-item-${index}`"
           :key="song.id"
           :class="
@@ -178,7 +187,7 @@ watch(currentIndexMusic, async (newIndex) => {
           </div>
         </div>
 
-        <div v-if="!musicList?.length" class="py-20 text-center text-gray-500">
+        <div v-if="!filteredList?.length" class="py-20 text-center text-gray-500">
           <i class="fa fa-music mb-4 text-3xl opacity-20"></i>
           <p>暂无歌曲数据</p>
         </div>

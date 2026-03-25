@@ -2,7 +2,7 @@
 <template>
   <div class="dark flex flex-col">
     <div class="flex w-full bg-background text-primary overflow-hidden grow">
-      <NavBar />
+      <NavBar style="height: calc(100vh - 80px)" />
       <main
         class="grow flex flex-col min-h-0 h-full overflow-auto"
         style="height: calc(100vh - 80px)"

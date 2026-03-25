@@ -29,6 +29,11 @@ export const useMusicList = () => {
   const changeCurrentMusicIndex = (index: number) => {
     currentIndexMusic.value = index;
   };
+  const searchQuery = useState<string>("searchQuery", () => "");
+  const changeSearchQuery = (query: string) => {
+    searchQuery.value = query;
+  };
+
   return {
     musicList,
     changeMusicList,
@@ -40,5 +45,7 @@ export const useMusicList = () => {
     music,
     currentIndexMusic,
     changeCurrentMusicIndex,
+    searchQuery,
+    changeSearchQuery,
   };
 };
