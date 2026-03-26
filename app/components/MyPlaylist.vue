@@ -36,6 +36,7 @@ const save = async () => {
 const change = (item: Playlist) => {
   changeActiveIndex(item.id!);
 };
+
 onMounted(() => {
   const cacheDB = new Dexie("musicCache");
   cacheDB.version(1).stores({
@@ -60,28 +61,23 @@ onMounted(() => {
       class="space-y-1 flex-1 overflow-y-auto scrollbar-hide"
     >
       <!-- 动态生成自定义歌单 -->
-      <!-- 因为需要从浏览器的indexedDB中获取数据，所以只能在客户端渲染 -->
-      <ClientOnly>
-        <li
-          :class="
-            cn(
-              'category-item active px-3 py-2 rounded-lg hover:bg-primary-foreground/50 cursor-pointer transition-colors',
-              {
-                'bg-primary-foreground / 10': activeIndex === item.id,
-              },
-            )
-          "
-          data-type="recommend"
-          v-for="item in playlists"
-          :key="item.id"
-          @click="change(item)"
-        >
-          {{ item.name }}
-        </li>
-        <template #fallback>
-          <li class="px-3 py-2 text-gray-400">加载中...</li>
-        </template>
-      </ClientOnly>
+
+      <li
+        :class="
+          cn(
+            'category-item active px-3 py-2 rounded-lg hover:bg-primary-foreground/50 cursor-pointer transition-colors',
+            {
+              'bg-primary-foreground / 10': activeIndex === item.id,
+            },
+          )
+        "
+        data-type="recommend"
+        v-for="item in playlists"
+        :key="item.id"
+        @click="change(item)"
+      >
+        {{ item.name }}
+      </li>
     </ul>
     <LazyDialog @save="save" v-model="open" v-if="open">
       <template #title> 创建新歌单 </template>
