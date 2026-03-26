@@ -2,7 +2,7 @@
 import Dexie, { type EntityTable } from "dexie";
 import { Input } from "@/components/ui/input";
 import { type Song, type Playlist } from "@/utils/dexie";
-import Dialog from "@/components/Dialog.vue";
+
 import { useMusicList } from "@/composables/useTypeList";
 import { cn } from "~/lib/utils";
 const playlists = ref<Playlist[]>([]);
@@ -83,7 +83,7 @@ onMounted(() => {
         </template>
       </ClientOnly>
     </ul>
-    <Dialog @save="save" v-model="open" hydrate-on-idle>
+    <LazyDialog @save="save" v-model="open" v-if="open">
       <template #title> 创建新歌单 </template>
       <template #content>
         <div class="grid gap-4">
@@ -97,7 +97,7 @@ onMounted(() => {
           </div>
         </div>
       </template>
-    </Dialog>
+    </LazyDialog>
   </div>
 </template>
 <style lang="scss" scoped></style>

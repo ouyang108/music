@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { Music } from "@/types/music";
-
+const router = useRouter();
 interface Props {
   music?: Music | null;
   isPlaying: boolean;
 }
 
 const props = defineProps<Props>();
+
+function goToLyrics() {
+  router.push(`/lyrics/1`);
+}
 </script>
 
 <template>
@@ -14,8 +18,9 @@ const props = defineProps<Props>();
     <div class="relative group">
       <img
         :src="music?.cover || 'https://picsum.photos/seed/cover1/56/56'"
-        class="w-14 h-14 rounded-lg shadow-2xl object-cover transition-transform group-hover:scale-105"
+        class="w-14 h-14 rounded-lg shadow-2xl object-cover transition-transform group-hover:scale-105 cursor-pointer"
         :alt="music?.title || '未在播放'"
+        @click="goToLyrics"
       />
       <div
         v-if="isPlaying"

@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     componentDir: "@/components/ui",
   },
   app: {
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       title: "音乐播放器 - 在线音乐欣赏平台",
       htmlAttrs: {
