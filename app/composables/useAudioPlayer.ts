@@ -45,6 +45,9 @@ export const useAudioPlayer = (
   };
 
   const togglePlay = () => {
+    // 如果音频元素没有音频，直接返回
+    if (!audioRef?.value?.src) return;
+    // 如果当前正在播放，暂停
     if (isPlaying.value) {
       pause();
     } else {
