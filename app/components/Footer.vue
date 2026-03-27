@@ -13,6 +13,8 @@ const {
   changeMusic,
   currentIndexMusic,
   changeCurrentMusicIndex,
+
+  changeAlbum,
 } = useMusicList();
 const { getMusicUrlWithCache } = useMusicCache();
 const audioRef = useTemplateRef<HTMLAudioElement>("audioRef");
@@ -44,8 +46,9 @@ const playActive = async (song: any, index: number) => {
   changeCurrentMusicIndex(index);
 
   // 使用共享缓存获取音乐 URL
-  const url = await getMusicUrlWithCache(song.id);
+  const { url, album } = await getMusicUrlWithCache(song.id);
   changeMusic(url);
+  changeAlbum(album);
 };
 
 // 监听音乐变化，自动加载并播放

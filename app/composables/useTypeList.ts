@@ -13,7 +13,10 @@ export const useMusicList = () => {
   const activeIndex = useState<number>("activeIndex", () => 0);
   // 当前正在播放的歌曲索引列表
   const currentIndexMusic = useState<number>("currentIndexMusic", () => 0);
-
+  // 专辑信息
+  const album = useState<any>("album", () => ({
+    name: "",
+  }));
   const changeMusicList = (list: any) => {
     musicList.value = list;
   };
@@ -25,6 +28,9 @@ export const useMusicList = () => {
   };
   const changeMusic = (url: string) => {
     music.value = url;
+  };
+  const changeAlbum = (albumParmas: any) => {
+    album.value = albumParmas;
   };
   const changeCurrentMusicIndex = (index: number) => {
     currentIndexMusic.value = index;
@@ -47,5 +53,7 @@ export const useMusicList = () => {
     changeCurrentMusicIndex,
     searchQuery,
     changeSearchQuery,
+    changeAlbum,
+    album,
   };
 };

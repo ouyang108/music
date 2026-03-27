@@ -15,3 +15,14 @@ export const getMusicUrl = async (baseURL: string, id: string | number) => {
   // console.log(res.data[0], "res");
   return res.data[0].url;
 };
+export const getMusicMessage = async (baseURL: string, id: string | number) => {
+  const res: any = await $fetch(`/api/songMessasge`, {
+    params: { id },
+  }).catch(() => {
+    console.log("获取歌曲信息失败");
+  });
+  return {
+    ...res.songs[0].al,
+    author: res.songs[0].ar[0].name || "未知艺术家",
+  };
+};

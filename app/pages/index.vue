@@ -9,6 +9,7 @@ const {
   changeCurrentMusicIndex,
   currentIndexMusic,
   activeIndex,
+  changeAlbum,
   searchQuery,
 } = useMusicList();
 
@@ -60,8 +61,10 @@ const playActive = async (song: any, index: number = 0) => {
   active.value = song.id;
 
   // 使用共享缓存获取音乐 URL
-  const url = await getMusicUrlWithCache(song.id);
+  const { url, album } = await getMusicUrlWithCache(song.id);
+  console.log(album);
   changeMusic(url);
+  changeAlbum(album);
   changeCurrentMusicIndex(index);
 };
 // 当分类切换的时候，需要修改currentIndexMusic
@@ -187,7 +190,10 @@ watch(currentIndexMusic, async (newIndex) => {
           </div>
         </div>
 
-        <div v-if="!filteredList?.length" class="py-20 text-center text-gray-500">
+        <div
+          v-if="!filteredList?.length"
+          class="py-20 text-center text-gray-500"
+        >
           <i class="fa fa-music mb-4 text-3xl opacity-20"></i>
           <p>暂无歌曲数据</p>
         </div>
