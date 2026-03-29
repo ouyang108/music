@@ -10,6 +10,7 @@ const {
   currentIndexMusic,
   activeIndex,
   changeAlbum,
+  changeCurrentMusicId,
   searchQuery,
 } = useMusicList();
 
@@ -65,6 +66,7 @@ const playActive = async (song: any, index: number = 0) => {
   console.log(album);
   changeMusic(url);
   changeAlbum(album);
+  changeCurrentMusicId(song.id);
   changeCurrentMusicIndex(index);
 };
 // 当分类切换的时候，需要修改currentIndexMusic

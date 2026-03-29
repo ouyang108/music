@@ -6,11 +6,12 @@ interface Props {
   isPlaying: boolean;
 }
 
-const { album } = useMusicList();
+const { album, currentMusicId } = useMusicList();
 const props = defineProps<Props>();
 
 function goToLyrics() {
-  router.push(`/lyrics/1`);
+  if (!currentMusicId.value) return;
+  router.push(`/lyrics/${currentMusicId.value}`);
 }
 </script>
 

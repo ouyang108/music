@@ -17,6 +17,8 @@ export const useMusicList = () => {
   const album = useState<any>("album", () => ({
     name: "",
   }));
+  // 音乐id
+  const currentMusicId = useState<string>("currentMusicId", () => "");
   const changeMusicList = (list: any) => {
     musicList.value = list;
   };
@@ -39,6 +41,23 @@ export const useMusicList = () => {
   const changeSearchQuery = (query: string) => {
     searchQuery.value = query;
   };
+  const changeCurrentMusicId = (id: string) => {
+    currentMusicId.value = id;
+  };
+  // 全局播放时间状态
+  const currentTime = useState<number>("currentTime", () => 0);
+  const duration = useState<number>("duration", () => 0);
+  const changeCurrentTime = (time: number) => {
+    currentTime.value = time;
+  };
+  const changeDuration = (time: number) => {
+    duration.value = time;
+  };
+  // 跳转时间（用于歌词点击跳转）
+  const seekTime = useState<number | null>("seekTime", () => null);
+  const changeSeekTime = (time: number | null) => {
+    seekTime.value = time;
+  };
 
   return {
     musicList,
@@ -55,5 +74,13 @@ export const useMusicList = () => {
     changeSearchQuery,
     changeAlbum,
     album,
+    currentMusicId,
+    changeCurrentMusicId,
+    currentTime,
+    duration,
+    changeCurrentTime,
+    changeDuration,
+    seekTime,
+    changeSeekTime,
   };
 };

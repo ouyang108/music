@@ -13,8 +13,12 @@ const {
   changeMusic,
   currentIndexMusic,
   changeCurrentMusicIndex,
-
+  changeCurrentMusicId,
   changeAlbum,
+  changeCurrentTime,
+  changeDuration,
+  seekTime,
+  changeSeekTime,
 } = useMusicList();
 const { getMusicUrlWithCache } = useMusicCache();
 const audioRef = useTemplateRef<HTMLAudioElement>("audioRef");
@@ -48,6 +52,7 @@ const playActive = async (song: any, index: number) => {
   // 使用共享缓存获取音乐 URL
   const { url, album } = await getMusicUrlWithCache(song.id);
   changeMusic(url);
+  changeCurrentMusicId(song.id);
   changeAlbum(album);
 };
 
@@ -87,6 +92,25 @@ const handleEnded = () => {
   originalHandleEnded();
   handleNext();
 };
+
+// 同步播放时间到全局状态
+watch(currentTime, (time) => {
+  changeCurrentTime(time);
+});
+
+watch(duration, (time) => {
+  changeDuration(time);
+});
+
+// 监听歌词跳转请求
+watch(seekTime, (time) => {
+  if (time !== null && audioRef.value && duration.value) {
+    // 跳转到指定时间
+    audioRef.value.currentTime = time;
+    // 重置 seekTime
+    changeSeekTime(null);
+  }
+});
 </script>
 
 <template>
