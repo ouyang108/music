@@ -22,6 +22,7 @@ const {
 } = useMusicList();
 const { getMusicUrlWithCache } = useMusicCache();
 const audioRef = useTemplateRef<HTMLAudioElement>("audioRef");
+const router = useRouter();
 
 // 使用音频播放器 composable
 const {
@@ -54,6 +55,10 @@ const playActive = async (song: any, index: number) => {
   changeMusic(url);
   changeCurrentMusicId(song.id);
   changeAlbum(album);
+  //如果当前的路由已经是歌词页，就替换路由参数
+  if (router.currentRoute.value.path.includes("lyrics")) {
+    router.replace(`/lyrics/${song.id}`);
+  }
 };
 
 // 监听音乐变化，自动加载并播放

@@ -2,17 +2,20 @@
 import { ref, computed, watch, nextTick } from "vue";
 
 definePageMeta({
-  pageTransition: {
-    name: "slide-up",
-  },
+  pageTransition: false, // 禁用页面过渡，避免同一页面切歌时闪烁
 });
 
-const { id } = useRoute().params;
+const route = useRoute();
+const id = computed(() => route.params.id);
+
 const {
   data: res,
   pending,
   error,
-} = await useFetch("/api/lyric", { params: { id } });
+} = await useLazyFetch("/api/lyric", {
+  params: { id },
+  watch: [id], // 监听 id 变化自动重新获取
+});
 
 if (error.value) {
   console.log("获取歌词失败");
@@ -20,6 +23,13 @@ if (error.value) {
 
 // 获取全局播放时间
 const { currentTime, changeSeekTime } = useMusicList();
+
+// 返回功能
+const router = useRouter();
+const goBack = () => {
+  // 销毁中间所有路由并跳转到首页
+  router.replace("/");
+};
 
 // 歌词行接口
 interface LyricLine {
@@ -58,10 +68,10 @@ const parseLyric = (lrc: string): LyricLine[] => {
   // 按时间排序
   return lyricLines.sort((a, b) => a.time - b.time);
 };
-
+const result = computed(() => res.value);
 // 解析后的歌词
 const lyricLines = computed(() => {
-  const lrc = res.value?.lrc?.lyric;
+  const lrc = result.value?.lrc?.lyric;
   return lrc ? parseLyric(lrc) : [];
 });
 
@@ -122,6 +132,27 @@ const formatTime = (seconds: number): string => {
   <div
     class="fixed top-0 left-0 right-0 bottom-0 bg-linear-to-b from-background/95 to-background/80 backdrop-blur-xl z-10 h-[calc(100vh-80px)] overflow-hidden"
   >
+    <!-- 返回按钮 -->
+    <button
+      @click="goBack"
+      class="absolute cursor-pointer top-6 left-6 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-300 group"
+      aria-label="返回"
+    >
+      <svg
+        class="w-5 h-5 text-white/70 group-hover:text-white transition-colors"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+    </button>
+
     <div
       v-if="pending"
       class="flex items-center justify-center h-full text-white/50"
