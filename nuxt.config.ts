@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { codeInspectorPlugin } from "code-inspector-plugin";
 export default defineNuxtConfig({
+  build: {
+    transpile: ["@shimmer-from-structure/core", "@shimmer-from-structure/vue"],
+  },
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
