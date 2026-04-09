@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
 import { nextTick } from "vue";
+import { Shimmer } from "@shimmer-from-structure/vue";
 // 假设数据来自你的 Composable
 const {
   currentMusic,
@@ -12,14 +13,17 @@ const {
   changeAlbum,
   changeCurrentMusicId,
   searchQuery,
+  isLoading,
 } = useMusicList();
 
 const filteredList = computed(() => {
   const q = searchQuery.value.trim();
   if (!q) return musicList.value;
-  return musicList.value.filter((song) =>
+  const result = musicList.value.filter((song) =>
     song.name?.toLowerCase().includes(q.toLowerCase()),
   );
+
+  return result;
 });
 const { getMusicUrlWithCache } = useMusicCache();
 const active = ref(0);
@@ -63,7 +67,7 @@ const playActive = async (song: any, index: number = 0) => {
 
   // 使用共享缓存获取音乐 URL
   const { url, album } = await getMusicUrlWithCache(song.id);
-  console.log(album);
+
   changeMusic(url);
   changeAlbum(album);
   changeCurrentMusicId(song.id);
@@ -127,71 +131,74 @@ watch(currentIndexMusic, async (newIndex) => {
         ref="songScrollContainer"
         class="flex-1 overflow-y-auto scrollbar-hide divide-y divide-white/5"
       >
-        <div
-          v-for="(song, index) in filteredList"
-          :id="`song-item-${index}`"
-          :key="song.id"
-          :class="
-            cn(
-              'grid grid-cols-12 px-6 py-4 items-center hover:bg-white/10 transition-all group cursor-default',
-              {
-                'bg-white/10': currentIndexMusic === index,
-              },
-            )
-          "
-        >
+        <Shimmer :loading="isLoading">
           <div
-            class="col-span-1 text-gray-500 text-sm font-medium cursor-pointer"
+            v-for="(song, index) in filteredList || 10"
+            :id="`song-item-${index}`"
+            :key="song.id"
+            :class="
+              cn(
+                'grid grid-cols-12 px-6 py-4 items-center hover:bg-white/10 transition-all group cursor-default',
+                {
+                  'bg-white/10': currentIndexMusic === index,
+                },
+              )
+            "
           >
-            <span class="text-gray-500 text-sm font-medium group-hover:hidden">
-              {{ (index + 1).toString().padStart(2, "0") }}
-            </span>
-
-            <Icon
-              @click="playActive(song, index)"
-              name="mynaui:play"
-              class="hidden group-hover:block cursor-pointer text-white text-xl"
-            />
-          </div>
-
-          <div class="col-span-6 flex items-center gap-4">
-            <img
-              v-if="song.al?.picUrl"
-              :src="song.al.picUrl + '?param=80y80'"
-              class="w-10 h-10 rounded-md object-cover shadow-lg shrink-0"
-            />
-            <div class="flex flex-col min-w-0">
-              <span class="text-white font-medium truncate">{{
-                song.name
-              }}</span>
-              <span
-                v-if="song.alia?.length"
-                class="text-xs text-gray-500 truncate"
-              >
-                {{ song.alia[0] }}
-              </span>
-            </div>
-            <button
-              class="group-hover:opacity-100 ml-2 text-gray-400 hover:text-primary transition-all p-1 cursor-pointer"
-              @click.stop="$emit('add-to-playlist', song)"
+            <div
+              class="col-span-1 text-gray-500 text-sm font-medium cursor-pointer"
             >
+              <span
+                class="text-gray-500 text-sm font-medium group-hover:hidden"
+              >
+                {{ (index + 1).toString().padStart(2, "0") }}
+              </span>
+
               <Icon
-                name="mynaui:heart"
-                class="text-lg"
-                :style="{ color: 'var(--text-primary)' }"
+                @click="playActive(song, index)"
+                name="mynaui:play"
+                class="hidden group-hover:block cursor-pointer text-white text-xl"
               />
-            </button>
-          </div>
+            </div>
 
-          <div class="col-span-3 text-gray-400 text-sm truncate pr-4">
-            {{ song.ar?.map((a: any) => a.name).join(" / ") || "未知歌手" }}
-          </div>
+            <div class="col-span-6 flex items-center gap-4">
+              <img
+                v-if="song.al?.picUrl"
+                :src="song.al.picUrl + '?param=80y80'"
+                class="w-10 h-10 rounded-md object-cover shadow-lg shrink-0"
+              />
+              <div class="flex flex-col min-w-0">
+                <span class="text-white font-medium truncate">{{
+                  song.name
+                }}</span>
+                <span
+                  v-if="song.alia?.length"
+                  class="text-xs text-gray-500 truncate"
+                >
+                  {{ song.alia[0] }}
+                </span>
+              </div>
+              <button
+                class="group-hover:opacity-100 ml-2 text-gray-400 hover:text-primary transition-all p-1 cursor-pointer"
+                @click.stop="$emit('add-to-playlist', song)"
+              >
+                <Icon
+                  name="mynaui:heart"
+                  class="text-lg"
+                  :style="{ color: 'var(--text-primary)' }"
+                />
+              </button>
+            </div>
 
-          <div class="col-span-2 text-right text-gray-500 text-sm font-mono">
-            {{ formatDuration(song.dt || 0) }}
-          </div>
-        </div>
+            <div class="col-span-3 text-gray-400 text-sm truncate pr-4">
+              {{ song.ar?.map((a: any) => a.name).join(" / ") || "未知歌手" }}
+            </div>
 
+            <div class="col-span-2 text-right text-gray-500 text-sm font-mono">
+              {{ formatDuration(song.dt || 0) }}
+            </div>
+          </div>
+        </Shimmer>
         <div
           v-if="!filteredList?.length"
           class="py-20 text-center text-gray-500"

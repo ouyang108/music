@@ -8,6 +8,7 @@ export const useMusicList = () => {
   const currentMusic = useState<Music>("currentMusic", () => ({
     name: "",
   }));
+  const isLoading = useState("isLoading", () => false);
   const music = useState<string>("music", () => "");
   // 左侧分类索引列表
   const activeIndex = useState<number>("activeIndex", () => 0);
@@ -58,6 +59,9 @@ export const useMusicList = () => {
   const changeSeekTime = (time: number | null) => {
     seekTime.value = time;
   };
+  const changeIsLoading = (loading: boolean) => {
+    isLoading.value = loading;
+  };
 
   return {
     musicList,
@@ -82,5 +86,7 @@ export const useMusicList = () => {
     changeDuration,
     seekTime,
     changeSeekTime,
+    changeIsLoading,
+    isLoading,
   };
 };

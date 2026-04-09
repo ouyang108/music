@@ -10,7 +10,7 @@ interface TopList {
 }
 const appConfig = useAppConfig();
 const { baseURL } = appConfig;
-const { changeActiveIndex, activeIndex } = useMusicList();
+const { changeActiveIndex, activeIndex, changeIsLoading } = useMusicList();
 const {
   data,
 }: { data: any; status: any; error: any; refresh: any; clear: any } =
@@ -20,11 +20,13 @@ const { changeMusicList, changeCurrentMusic } = useMusicList();
 
 const list = computed(() => data.value?.list?.slice(0, 5) || []);
 const changeMusic = async (item: TopList) => {
+  changeIsLoading(true);
   const res: any = await $fetch("/api/list", { params: { id: item.id } });
 
   changeActiveIndex(item.id);
   changeMusicList(res.songs);
   changeCurrentMusic({ name: item.name, description: item?.description || "" });
+  changeIsLoading(false);
 };
 </script>
 <template>
