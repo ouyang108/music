@@ -49,6 +49,8 @@ metadata:
 3. 生成简洁的中文描述（subject）
 4. 暂存所有变更文件（`git add -A`，但跳过 .env 等敏感文件）
 5. 执行 `git commit -m "type: emoji subject"`
+6. 执行 `git pull --rebase` 拉取远程最新代码（rebase 方式保持提交历史整洁）
+7. 执行 `git push` 推送到远程仓库
 
 ## 上下文信息
 
@@ -65,6 +67,8 @@ metadata:
 2. **生成提交信息**：按照 `{type}: {emoji} {subject}` 格式构造提交信息
 3. **暂存文件**：使用 `git add` 暂存相关文件（避免暂存 .env、secrets 等敏感文件）
 4. **执行提交**：使用 `git commit -m` 提交，**不要使用 `--no-verify`**
+5. **拉取最新代码**：执行 `git pull --rebase`，将远程最新提交同步到本地，若有冲突需先解决后再继续
+6. **推送代码**：执行 `git push`，将本次提交推送到远程仓库
 
 如果用户在调用时提供了参数（如 `$ARGUMENTS`），将其作为 subject 的补充说明或提交类型的提示。
 
